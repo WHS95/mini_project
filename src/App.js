@@ -1,7 +1,8 @@
 import "./App.css";
 import Home from "./home/Home";
 import Participation from "./rank/participation";
-// import Manage from "./rank/manage";
+import Founder from "./rank/founder";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -10,8 +11,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/rank/participation' element={<Participation />} />
-          {/* <Route path='/rank/manage' element={<Manage />} /> */}
+          <Route path='/user/participation' element={<Participation />} />
+          <Route path='/user/founder' element={<Founder />} />
         </Routes>
       </BrowserRouter>
     </div>

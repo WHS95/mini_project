@@ -5,11 +5,11 @@ export default function Home() {
   const navigate = useNavigate();
 
   const gotoParticipation = () => {
-    navigate(`/rank/participation`);
+    navigate(`/user/participation`);
   };
 
   const gotoManage = () => {
-    navigate(`/rank/manage`);
+    navigate(`/user/founder`);
   };
 
   return (
