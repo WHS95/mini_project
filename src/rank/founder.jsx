@@ -1,4 +1,5 @@
-import MonthNavigation from "./MonthNavigation";
+import MonthNavigation from "../common/MonthNavigation";
+import BackButton from "../common/backButton";
 import supabase from "../config/supabaseClient";
 import React, { useState, useEffect } from "react";
 
@@ -76,13 +77,14 @@ export default function Founder() {
 
   return (
     <div className='dark flex flex-col justify-between  h-screen bg-gray-800 text-white'>
-      <header className='flex items-center justify-between px-6 py-4 bg-green-500'>
+      <header className='flex items-center justify-between px-6 py-4 bg-blue-500'>
         <h1 className='text-1xl font-bold text-white-900'>
           {" "}
           <span>T C R C</span>
           <br />
           <span>개설랭킹</span>
         </h1>
+        <BackButton />
       </header>
       <MonthNavigation currentMonth={currentMonth} changeMonth={changeMonth} />
       <main className='flex-1 overflow-y-auto p-3 bg-gray-800'>

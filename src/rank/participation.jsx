@@ -1,4 +1,5 @@
-import MonthNavigation from "./MonthNavigation";
+import MonthNavigation from "../common/MonthNavigation";
+import BackButton from "../common/backButton";
 import supabase from "../config/supabaseClient";
 import React, { useState, useEffect } from "react";
 
@@ -82,6 +83,7 @@ export default function Participation() {
           <br />
           <span>참여랭킹</span>
         </h1>
+        <BackButton />
       </header>
       <MonthNavigation currentMonth={currentMonth} changeMonth={changeMonth} />
       <main className='flex-1 overflow-y-auto p-3 bg-gray-800'>

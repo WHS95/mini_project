@@ -8,8 +8,12 @@ export default function Home() {
     navigate(`/user/participation`);
   };
 
-  const gotoManage = () => {
+  const gotoFounder = () => {
     navigate(`/user/founder`);
+  };
+
+  const gotoCheckOut = () => {
+    navigate(`/user/checkout`);
   };
 
   return (
@@ -30,16 +34,22 @@ export default function Home() {
       </header>
       <main className='flex flex-col space-y-4 shadow-lg w-full max-w-xs'>
         <button
-          className='font-bold first-line:p-4 bg-blue-500 text-white text-center rounded-md hover:bg-blue-600 transform hover:scale-105 transition-transform duration-200 shadow-lg'
+          className='font-bold p-4 bg-blue-500 text-white text-center rounded-md hover:bg-blue-600 transform hover:scale-105 transition-transform duration-200 shadow-lg'
           onClick={() =>gotoParticipation()}
         >
-          참여 왕
+          참여랭킹
+        </button>
+        <button
+          className='font-bold p-4 bg-blue-500 text-white text-center rounded-md hover:bg-green-600 transform hover:scale-105 transition-transform duration-200 shadow-lg'
+          onClick={() =>gotoFounder()}
+        >
+          개설랭킹
         </button>
         <button
           className='font-bold p-4 bg-green-500 text-white text-center rounded-md hover:bg-green-600 transform hover:scale-105 transition-transform duration-200 shadow-lg'
-          onClick={() =>gotoManage()}
+          onClick={() =>gotoCheckOut()}
         >
-          개설 왕
+          출석체크 
         </button>
       </main>
     </div>
