@@ -1,21 +1,82 @@
-
-import React, { useState } from "react";
 import MonthNavigation from "./MonthNavigation";
+import supabase from "../config/supabaseClient";
+import React, { useState, useEffect } from "react";
 
 export default function Participation() {
-
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [users, setUsers] = useState([]);
 
+  //날짜 설정 부분
   const changeMonth = (increment) => {
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(newMonth.getMonth() + increment);
     setCurrentMonth(newMonth);
   };
 
+  useEffect(() => {
+    let year = currentMonth.getFullYear();
+    let month = currentMonth.getMonth() + 1;
+
+    const dateFormat = (date) => {
+      let dateFormat2 =
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() + 1 < 9
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) +
+        "-" +
+        (date.getDate() < 9 ? "0" + date.getDate() : date.getDate());
+      return dateFormat2;
+    };
+
+    let startday = dateFormat(new Date(year, month - 1, 1)); //startday:  2024-01-01
+    let endday = dateFormat(new Date(year, month, 0)); //endday:  2024-01-31
+
+    const fetchUsersAndMeetings = async () => {
+      let { data: activeUsers, error: userError } = await supabase
+        .from("users")
+        .select("name, age")
+        .eq("activation", true);
+
+      if (userError) {
+        console.error(userError.message);
+        return;
+      }
+
+      const usersWithMeetingCounts = await Promise.all(
+        activeUsers.map(async (user) => {
+          let { data: userMeetings, error: meetingError } = await supabase
+            .from("meeting")
+            .select("*", { count: "exact" })
+            .eq("name", user.name)
+            .gte("meeting_date", startday)
+            .lte("meeting_date", endday);
+
+          if (meetingError) {
+            console.error(meetingError.message); // Logging the error for debugging
+            return { ...user, meetingCount: 0 }; // Return user with meetingCount set to 0 in case of an error
+          }
+
+          const meetingCount = userMeetings ? userMeetings.length : 0;
+          return { ...user, meetingCount: meetingCount };
+        })
+      );
+
+      // meetingCount가 0인 사용자 제외
+      const filteredUsers = usersWithMeetingCounts.filter(
+        (user) => user.meetingCount > 0
+      );
+
+      setUsers(filteredUsers.sort((a, b) => b.meetingCount - a.meetingCount));
+    };
+
+    fetchUsersAndMeetings();
+  }, [currentMonth]);
+
   return (
     <div className='dark flex flex-col justify-between  h-screen bg-gray-800 text-white'>
       <header className='flex items-center justify-between px-4 py-3 bg-blue-500'>
-      <h1 className='text-1xl font-bold text-gray-900'>
+        <h1 className='text-1xl font-bold text-white-900'>
           {" "}
           <span>T C R C</span>
           <br />
@@ -40,21 +101,16 @@ export default function Participation() {
               </tr>
             </thead>
             <tbody class='border-0'>
-              <tr class='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-                <td class='p-4 align-middle '>1</td>
-                <td class='p-4 align-middle '>서우혁</td>
-                <td class='p-4 align-middle '>15</td>
-              </tr>
-              <tr class='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-                <td class='p-4 align-middle '>2</td>
-                <td class='p-4 align-middle '>전현진</td>
-                <td class='p-4 align-middle '>12</td>
-              </tr>
-              <tr class='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-                <td class='p-4 align-middle '>3</td>
-                <td class='p-4 align-middle '>김건우</td>
-                <td class='p-4 align-middle '>10</td>
-              </tr>
+              {users.map((user, index) => (
+                <tr
+                  class='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
+                  key={index}
+                >
+                  <td class='p-4 align-middle'>{index + 1}</td>
+                  <td class='p-4 align-middle'>{`${user.name}(${user.age})`}</td>
+                  <td class='p-4 align-middle'>{user.meetingCount}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -62,31 +118,3 @@ export default function Participation() {
     </div>
   );
 }
-
-// function CalendarDaysIcon(props) {
-//   return (
-//     <svg
-//       {...props}
-//       xmlns="http://www.w3.org/2000/svg"
-//       width="24"
-//       height="24"
-//       viewBox="0 0 24 24"
-//       fill="none"
-//       stroke="currentColor"
-//       strokeWidth="2"
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//     >
-//       <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-//       <line x1="16" x2="16" y1="2" y2="6" />
-//       <line x1="8" x2="8" y1="2" y2="6" />
-//       <line x1="3" x2="21" y1="10" y2="10" />
-//       <path d="M8 14h.01" />
-//       <path d="M12 14h.01" />
-//       <path d="M16 14h.01" />
-//       <path d="M8 18h.01" />
-//       <path d="M12 18h.01" />
-//       <path d="M16 18h.01" />
-//     </svg>
-//   )
-// }
