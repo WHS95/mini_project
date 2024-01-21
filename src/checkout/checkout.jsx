@@ -1,7 +1,7 @@
 
 // import supabase from "../config/supabaseClient";
 // import React, { useState, useEffect } from "react";
-
+import BackButton from "../common/backButton";
 export default function Checkout() {
   // const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -71,6 +71,7 @@ export default function Checkout() {
         <h1 className='text-1xl font-bold text-white-900'>
             준비중
         </h1>
+        <BackButton />
       </header>
       {/* <MonthNavigation currentMonth={currentMonth} changeMonth={changeMonth} />
       <main className='flex-1 overflow-y-auto p-3 bg-gray-800'>
