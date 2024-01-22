@@ -1,110 +1,203 @@
-
-// import supabase from "../config/supabaseClient";
-// import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import BackButton from "../common/backButton";
+import supabase from "../config/supabaseClient";
+
 export default function Checkout() {
-  // const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [username, setUsername] = useState("");
+  const [participationDate, setParticipationDate] = useState("");
+  const [activation, setActivation] = useState("1");
+  const [location, setLocation] = useState("1");
+  const [isFounder, setIsFounder] = useState(false);
+  const [founderButtonText, setFounderButtonText] = useState("모임개설자X");
+  const [userAge, setUserAge] = useState(90);
 
-  // useEffect(() => {
-  //   let year = currentMonth.getFullYear();
-  //   let month = currentMonth.getMonth() + 1;
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    setParticipationDate(currentDate);
+  }, []);
 
-  //   const dateFormat = (date) => {
-  //     let dateFormat2 =
-  //       date.getFullYear() +
-  //       "-" +
-  //       (date.getMonth() + 1 < 9
-  //         ? "0" + (date.getMonth() + 1)
-  //         : date.getMonth() + 1) +
-  //       "-" +
-  //       (date.getDate() < 9 ? "0" + date.getDate() : date.getDate());
-  //     return dateFormat2;
-  //   };
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
 
-  //   let startday = dateFormat(new Date(year, month - 1, 1)); //startday:  2024-01-01
-  //   let endday = dateFormat(new Date(year, month, 0)); //endday:  2024-01-31
+  const handleParticipationDate = (e) => {
+    setParticipationDate(e.target.value);
+  };
 
-  //   const fetchUsersAndMeetings = async () => {
-  //     let { data: activeUsers, error: userError } = await supabase
-  //       .from("users")
-  //       .select("name, age")
-  //       .eq("activation", true);
+  const handleActivation = (e) => {
+    setActivation(e.target.value);
+  };
 
-  //     if (userError) {
-  //       console.error(userError.message);
-  //       return;
-  //     }
+  const handleLocation = (e) => {
+    setLocation(e.target.value);
+  };
 
-  //     const usersWithMeetingCounts = await Promise.all(
-  //       activeUsers.map(async (user) => {
-  //         let { data: userMeetings, error: meetingError } = await supabase
-  //           .from("meeting")
-  //           .select("*", { count: "exact" })
-  //           .eq("name", user.name)
-  //           .gte("meeting_date", startday)
-  //           .lte("meeting_date", endday);
+  const handleUserAge = (e) => {
+    setUserAge(e.target.value);
+  };
 
-  //         if (meetingError) {
-  //           console.error(meetingError.message); // Logging the error for debugging
-  //           return { ...user, meetingCount: 0 }; // Return user with meetingCount set to 0 in case of an error
-  //         }
 
-  //         const meetingCount = userMeetings ? userMeetings.length : 0;
-  //         return { ...user, meetingCount: meetingCount };
-  //       })
-  //     );
+  const handleIsFounder = () => {
+    setIsFounder(!isFounder);
+    setFounderButtonText(isFounder ? "모임개설자X" : "모임개설자O");
+  };
 
-  //     // meetingCount가 0인 사용자 제외
-  //     const filteredUsers = usersWithMeetingCounts.filter(
-  //       (user) => user.meetingCount > 0
-  //     );
+  const handleSubmit = async () => {
+    try {
+      // Insert data into the "meeting" table
+      const { data, error } = await supabase.from("meeting").insert([
+        {
+          name: username,
+          meeting_date: participationDate,
+          activation,
+          age:userAge,
+          location,
+          founder: isFounder,
+        },
+      ]);
 
-  //     setUsers(filteredUsers.sort((a, b) => b.meetingCount - a.meetingCount));
-  //   };
-
-  //   fetchUsersAndMeetings();
-  // }, [currentMonth]);
+      if (error) {
+        console.error("Error inserting data:", error.message);
+      } else {
+        console.log("Data inserted successfully:", data);
+        // Reset the form or perform any other necessary actions
+      }
+    } catch (error) {
+      console.error("Error inserting data:", error.message);
+    }
+  };
 
   return (
-    <div className='dark flex flex-col justify-between  h-screen bg-gray-800 text-white'>
-      <header className='flex items-center justify-between px-4 py-3 bg-blue-500'>
+    <div className='dark flex flex-col justify-between  h-screen bg-gray-800 text-black'>
+      <header className='flex items-center justify-between px-6 py-4 bg-green-600 text-white'>
         <h1 className='text-1xl font-bold text-white-900'>
-            준비중
+          {" "}
+          <span>T C R C</span>
+          <br />
+          <span>출석체크</span>
         </h1>
         <BackButton />
       </header>
-      {/* <MonthNavigation currentMonth={currentMonth} changeMonth={changeMonth} />
       <main className='flex-1 overflow-y-auto p-3 bg-gray-800'>
         <div className='rounded-lg overflow-hidden bg-gray-700 p-4 pt-1 mx-auto w-full sm:w-3/4 md:w-3/4 lg:w-2/3 xl:w-1/2'>
-          <table class='w-full caption-bottom text-sm'>
-            <thead class='border-b'>
-              <tr class='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-                <th class='h-12 px-4 text-middle align-middle font-medium text-muted-foreground '>
-                  순위
-                </th>
-                <th class='h-12 px-4 text-middle align-middle font-medium text-muted-foreground '>
-                  이름(년생)
-                </th>
-                <th class='h-12 px-4 text-middle align-middle font-medium text-muted-foreground '>
-                  참여횟수
-                </th>
-              </tr>
-            </thead>
-            <tbody class='border-0'>
-              {users.map((user, index) => (
-                <tr
-                  class='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
-                  key={index}
-                >
-                  <td class='p-4 align-middle'>{index + 1}</td>
-                  <td class='p-4 align-middle'>{`${user.name}(${user.age})`}</td>
-                  <td class='p-4 align-middle'>{user.meetingCount}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className='flex flex-col p-1'>
+            <label
+              className='font-bold mb-2 text-left text-white'
+              htmlFor='name'
+            >
+              이름
+            </label>
+            <input
+              className='form-input px-4 py-2 border rounded-md'
+              type='text'
+              name='username'
+              value={username}
+              onChange={handleUsernameChange}
+              placeholder='홍길동'
+            />
+          </div>
+
+          <div className='flex flex-col p-1'>
+            <label
+              className='font-bold mb-2 text-left text-white'
+              htmlFor='name'
+            >
+              나이
+            </label>
+            <input
+              className='form-input px-4 py-2 border rounded-md'
+              type='number'
+              name='userAge'
+              value={userAge}
+              onChange={handleUserAge}
+              placeholder='94'
+            />
+          </div>
+
+          <div className='flex flex-col p-1'>
+            <label
+              className='mb-2 font-bold text-left  text-white'
+              htmlFor='date'
+            >
+              참여일
+            </label>
+            <input
+              className='form-input px-4 py-2 border rounded-md'
+              id='date'
+              type='date'
+              value={participationDate}
+              onChange={handleParticipationDate}
+            />
+          </div>
+
+          <div className='flex flex-col p-1'>
+            <label
+              className='mb-2 font-bold text-left  text-white'
+              htmlFor='type'
+            >
+              운동종류
+            </label>
+            <select
+              className='form-input px-4 py-2 border rounded-md'
+              onChange={handleActivation}
+              value={activation}
+            >
+              <option value='1'>러닝</option>
+              <option value='2'>등산</option>
+              <option value='3'>자전거</option>
+              <option value='4'>기타</option>
+            </select>
+          </div>
+
+          <div className='flex flex-col p-1'>
+            <label
+              className='mb-2 font-bold text-left  text-white'
+              htmlFor='location'
+            >
+              장소
+            </label>
+            <select
+              onChange={handleLocation}
+              value={location}
+              className='form-input px-4 py-2 border rounded-md'
+            >
+              <option value='1'>태평_탄천</option>
+              <option value='2'>서현_황새울공원</option>
+              <option value='3'>야탑_탄천종합운동장</option>
+              <option value='4'>모란_성남종합운동장</option>
+              <option value='5'>위례</option>
+              <option value='6'>정자</option>
+              <option value='7'>판교</option>
+              <option value='8'>그 외</option>
+            </select>
+          </div>
+
+          <div className='flex flex-col p-1'>
+            <label
+              className='mb-2 font-bold text-left  text-white'
+              htmlFor='isFounder'
+            >
+              개설자여부
+            </label>
+            <button
+              onClick={handleIsFounder}
+              class='text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 rounded text-lg'
+            >
+              {founderButtonText}
+            </button>
+          </div>
+
+          <div className='flex flex-col p-1'>
+            <label></label>
+            <button
+              onClick={handleSubmit}
+              class='text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 rounded text-lg py-2'
+            >
+              출석체크 완료
+            </button>
+          </div>
         </div>
-      </main> */}
+      </main>
     </div>
   );
 }
