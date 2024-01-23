@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-export default function Home() {
+import BasicLogin from "../login/basicLogin";
 
+export default function Home() {
   const navigate = useNavigate();
 
   const gotoParticipation = () => {
@@ -15,6 +16,12 @@ export default function Home() {
   const gotoCheckOut = () => {
     navigate(`/user/checkout`);
   };
+
+
+  const gotoSignUp = () => {
+    navigate(`/signup`);
+  };
+
 
   return (
     <div
@@ -35,21 +42,28 @@ export default function Home() {
       <main className='flex flex-col space-y-4 shadow-lg w-full max-w-xs'>
         <button
           className='font-bold p-4 bg-blue-500 text-white text-center rounded-md hover:bg-blue-700 transform hover:scale-105 transition-transform duration-200 shadow-lg'
-          onClick={() =>gotoParticipation()}
+          onClick={() => gotoParticipation()}
         >
           참여랭킹
         </button>
         <button
           className='font-bold p-4 bg-blue-500 text-white text-center rounded-md hover:bg-blue-700 transform hover:scale-105 transition-transform duration-200 shadow-lg'
-          onClick={() =>gotoFounder()}
+          onClick={() => gotoFounder()}
         >
           개설랭킹
         </button>
         <button
           className='font-bold p-4 bg-green-500 text-white text-center rounded-md hover:bg-green-700 transform hover:scale-105 transition-transform duration-200 shadow-lg'
-          onClick={() =>gotoCheckOut()}
+          onClick={() => gotoCheckOut()}
         >
-          출석체크 
+          출석체크
+        </button>
+
+        <button
+          className='font-bold p-4 bg-green-500 text-white text-center rounded-md hover:bg-green-700 transform hover:scale-105 transition-transform duration-200 shadow-lg'
+          onClick={() => gotoSignUp()}
+        >
+          회원가입
         </button>
       </main>
     </div>
