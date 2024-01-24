@@ -4,7 +4,6 @@ import Modal from 'react-modal';
 Modal.setAppElement('#root'); // Adjust according to your app's root element
 
 const CustomModal = ({ isOpen, onRequestClose, errorMessage}) => {
-  console.log('errorMessage: ', errorMessage);
   return (
     <Modal
       isOpen={isOpen}

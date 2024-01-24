@@ -22,6 +22,11 @@ export default function Home() {
     navigate(`/signup`);
   };
 
+  const gotoLogin = () => {
+    navigate(`/login`);
+  };
+
+  
 
   return (
     <div
@@ -64,6 +69,12 @@ export default function Home() {
           onClick={() => gotoSignUp()}
         >
           회원가입
+        </button>
+        <button
+          className='font-bold p-4 bg-green-500 text-white text-center rounded-md hover:bg-green-700 transform hover:scale-105 transition-transform duration-200 shadow-lg'
+          onClick={() => gotoLogin()}
+        >
+          로그인
         </button>
       </main>
     </div>

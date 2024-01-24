@@ -4,6 +4,7 @@ import Participation from "./rank/participation";
 import Founder from "./rank/founder";
 import Checkout from "./checkout/checkout";
 import BasicLogin from "./login/basicLogin";
+import BasicLoginCheck from "./login/basicLoginCheck";
 
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -18,6 +19,7 @@ function App() {
           <Route path='/user/founder' element={<Founder />} />
           <Route path='/user/checkout' element={<Checkout />} />
           <Route path='/signup' element={<BasicLogin />} />
+          <Route path='/login' element={<BasicLoginCheck />} />
         </Routes>
       </BrowserRouter>
     </div>
