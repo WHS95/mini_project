@@ -8,7 +8,6 @@ export default function BasicLoginCheck() {
   const [passwordError, setPasswordError] = useState(null);
   const [emailError, setEmailError] = useState(null);
 
- 
   async function LoginCheck() {
     console.log("=======signUpUser=====");
 

@@ -21,3 +21,10 @@ QR 코드로 가능하게
 -기존 회원인지 여부
 -제출후 홈페이지로 가게
 
+
+
+https://supabase.com/dashboard/project/eynjlxtyxihkokeesrlj/auth/users
+
+https://stackoverflow.com/questions/75317145/how-to-use-the-signup-method-in-supabase-to-add-additional-user-info-when-sign
+
+https://supabase.com/docs/guides/auth/auth-email

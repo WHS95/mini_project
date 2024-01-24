@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import BackButton from "../common/backButton";
 import CustomModal from "../common/CustomModal";
 import supabase from "../config/supabaseClient";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
+  const navigate = useNavigate(); //변수 할당시켜서 사용
+
   const [username, setUsername] = useState("");
   const [participationDate, setParticipationDate] = useState("");
   const [activation, setActivation] = useState("1");
@@ -13,12 +15,11 @@ export default function Checkout() {
   const [userAge, setUserAge] = useState("");
   const [isUser, setIsUser] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-
-  //회원 여부 체크 
+  //회원 여부 체크
   const fetchUser = async () => {
-    const { data, } = await supabase
+    const { data } = await supabase
       .from("users")
       .select("*", { count: "exact" })
       .eq("name", username)
@@ -29,7 +30,7 @@ export default function Checkout() {
     } else {
       setIsUser(false);
       setModalIsOpen(true); // Open modal if no user is found
-      setErrorMessage("이름과 년생을 확인해주세요")
+      setErrorMessage("이름과 년생을 확인해주세요");
     }
   };
 
@@ -59,38 +60,31 @@ export default function Checkout() {
   };
 
   const handleIsFounder = (e) => {
-    setIsFounder(e.target.value === 1? true : false);
+    setIsFounder(e.target.value === 1 ? true : false);
   };
 
   const handleSubmit = async () => {
-    try {
+    //유저정보 있는지 조회(이름 ,나이)
+    await fetchUser();
 
-      //유저정보 있는지 조회(이름 ,나이)
-      fetchUser();
+    if (isUser) {
+      const { data, error } = await supabase.from("meeting").insert([
+        {
+          name: username, //이름
+          age: userAge, //년생
+          meeting_date: participationDate, //참석일
+          activation, //활동
+          location, //지역
+          founder: isFounder, //개설자여부
+        },
+      ]);
 
-
-      if (isUser) {
-        const { data, error } = await supabase.from("meeting").insert([
-          {
-            name: username, //이름
-            age: userAge, //년생
-            meeting_date: participationDate,//참석일
-            activation, //활동
-            location,   //지역
-            founder: isFounder,//개설자여부
-          },
-        ]);
-
-        if (error) {
-          console.error("Error inserting data:", error.message);
-        } else {
-          console.log("Data inserted successfully:", data);
-        }
-      } 
-
-
-    } catch (error) {
-      console.error("Error inserting data:", error.message);
+      if (error) {
+        setModalIsOpen(true);
+        setErrorMessage("출석체크 에러 운영진 문의");
+      } else if (data) {
+        navigate(`/`);
+      }
     }
   };
 
@@ -210,12 +204,12 @@ export default function Checkout() {
             >
               개설자여부
             </label>
-              <select
+            <select
               onChange={handleIsFounder}
               value={isFounder}
               className='form-input py-2 px-3 focus:outline-none  border rounded-md'
             >
-              <option value="1">모임 개설자 X</option>
+              <option value='1'>모임 개설자 X</option>
               <option value='2'>모임 개설자 O</option>
             </select>
           </div>
@@ -229,20 +223,13 @@ export default function Checkout() {
               출석체크 완료
             </button>
           </div>
-          <CustomModal isOpen={modalIsOpen} onRequestClose={closeModal}  errorMessage={errorMessage} />
+          <CustomModal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            errorMessage={errorMessage}
+          />
         </div>
       </main>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
